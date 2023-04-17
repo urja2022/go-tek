@@ -30,6 +30,7 @@ const authStore = middleware_((set, get) => ({
         withCredentials: true,
       });
       const verify = response?.data?.isVerify;
+     console.log("dsfsdf",response);
       if (verify === 0) {
         return [response?.data, null];
       } else {

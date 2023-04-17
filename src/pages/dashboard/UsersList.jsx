@@ -91,14 +91,14 @@ export default function UsersList() {
   const TABLE_HEAD = [
     // { id: '', label: '', alignRight: false },
     { id: 'userName', label: 'name', alignRight: false },
-    { id: 'fullName', label: 'full name', alignRight: false },
+    // { id: 'fullName', label: 'full name', alignRight: false },
     { id: 'email', label: 'email', alignRight: false },
     { id: 'mobile', label: 'mobile number', alignRight: false },
     { id: 'status', label: 'enabled', alignRight: false },
-    { id: 'emailVerify', label: 'email verified', alignRight: false },
+    
     { id: 'mobileVerify', label: 'phone verified', alignRight: false },
-    { id: 'status', label: 'account status', alignRight: false },
-    { id: 'userTrace', label: 'trace count', alignRight: false },
+   
+    // { id: 'userTrace', label: 'trace count', alignRight: false },
     { id: 'createdAt', label: 'created at', alignRight: false },
     { id: 'action', label: 'action', alignRight: false },
   ];
@@ -164,7 +164,7 @@ export default function UsersList() {
   }
   async function fetchSeeker(page, filterName) {
     const response = await axiosPrivate.get(USER_API_URL.userList, { params: { type: '1', page: page + 1, search: filterName, limit: rowsPerPage } })
-
+    console.log("res", response);
     return response.data[0];
   }
 
@@ -243,8 +243,8 @@ export default function UsersList() {
   const { isLoading, data: userSeekerList, refetch } = useQuery(['SeekerData', page, filterName], () => fetchSeeker(page, filterName), { keepPreviousData: true, })
 
   useEffect(() => {
+    console.log("userSeeker", userSeekerList);
     if (userSeekerList) {
-      setCsvData([]);
       setTableData(userSeekerList?.data);
       setRowsPerPage(userSeekerList?.metadata.length != 0 ? userSeekerList?.metadata[0].limit : 10);
     }
@@ -254,6 +254,7 @@ export default function UsersList() {
     setTimeout(() => {
       setLoding(false);
     }, 1800);
+
   }, [userSeekerList])
   if (isLoading) return <LoadingScreen />
 
@@ -412,16 +413,16 @@ export default function UsersList() {
 
 
   // navigate to location list 
-  const handleOnClick = (row) => {
-    navigate(PATH_DASHBOARD.general.userLocation, { state: { user: row } });
-  }
+  // const handleOnClick = (row) => {
+  //   navigate(PATH_DASHBOARD.general.userLocation, { state: { user: row } });
+  // }
 
 
   // open notification modal
-  const handleOpenNotificationModal = (row) => {
-    setUserId(row?.id);
-    setOpenNotificationModal(true)
-  }
+  // const handleOpenNotificationModal = (row) => {
+  //   setUserId(row?.id);
+  //   setOpenNotificationModal(true)
+  // }
   const handleCloseNotificationModal = () => {
     setUserId('');
     setOpenNotificationModal(false);
@@ -449,8 +450,8 @@ export default function UsersList() {
               ? <AppTooltip title="add user" placement="bottom"><Button className="dashboard_light_bg_icon_btn" ><AddCircleOutlineOutlinedIcon style={{ fontSize: 18, color: "#6200ee" }} /></Button></AppTooltip> : ''}
             {permissionsData?.users?.substring(4, 5) == "1"
               ? <AppTooltip title="export users" placement="bottom"><Button className="dashboard_light_bg_icon_btn" ><CSVLink {...csvReport}><FileUploadOutlinedIcon style={{ fontSize: 18, color: "#6200ee" }} /></CSVLink></Button></AppTooltip> : ''}
-           
-           
+
+
             <AppTooltip title="refresh" placement="bottom"><Button className="dashboard_light_bg_icon_btn"><RefreshOutlinedIcon style={{ fontSize: 18, color: "#6200ee" }} /></Button></AppTooltip>
           </Stack>
         </div>
@@ -493,10 +494,12 @@ export default function UsersList() {
                         defaultChecked
                       sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
                       /> */}
-                      <TableCell component="th" scope="row"> {row?.userName ?? "-"}</TableCell>
-                      <TableCell align="left">  {row?.fullName ?? "-"}</TableCell>
-                      <TableCell align="left">  {row?.email ?? "-"}</TableCell>
-                      <TableCell align="left">  {row?.mobile ?? "-"}</TableCell>
+                      {console.log(row)}
+                      <TableCell component="th" scope="row"> {row?.userName}</TableCell>
+                   
+                      <TableCell align="left">  {row?.email}</TableCell>
+                      <TableCell align="left">  {row?.mobile
+                        ?.text}</TableCell>
                       <TableCell align="left">
                         <AppTooltip title="change status" placement="bottom"><Switch
                           checked={row.isUserRejected === 1 ? true : false}
@@ -509,9 +512,17 @@ export default function UsersList() {
                           <Switch checked={row.emailVerify === 1 ? true : false} />
                         </AppTooltip>
                       </TableCell> */}
-                      <TableCell align="left">  {row.email && row.isVerify == 1 ? <Chip label="verified" className="app_status_chip accepted" /> : <Chip label="unverified" className="app_status_chip invalid" />}</TableCell>
+                      {/* <TableCell align="left"> <Chip label="unverified" className="app_status_chip invalid" /></TableCell>
+                      <TableCell align="left"> <Chip label="unverified" className="app_status_chip invalid" /></TableCell>
+                      <TableCell align="left">  <Chip label="de-active" className="app_status_chip invalid" /></TableCell> */}
+
+
+                    
                       <TableCell align="left">  {row.mobile && row.isVerify == 1 ? <Chip label="verified" className="app_status_chip accepted" /> : <Chip label="unverified" className="app_status_chip invalid" />}</TableCell>
-                      <TableCell align="left">  {row.status == 1 ? <Chip label="active" className="app_status_chip accepted" /> : <Chip label="de-active" className="app_status_chip invalid" />}</TableCell>
+
+                      {/* <TableCell align="left">  {row.status == 1 ? <Chip label="active" className="app_status_chip accepted" /> : <Chip label="de-active" className="app_status_chip invalid" />}</TableCell> */}
+
+
                       {/* <TableCell align="left">
                         <AppTooltip title="disabled" placement="bottom">
                           <Switch checked={row.mobileVerify === 1 ? true : false} />
@@ -522,10 +533,10 @@ export default function UsersList() {
                           <Switch checked={row.status === 1 ? true : false} />
                         </AppTooltip>
                       </TableCell> */}
-                      <TableCell align="left"> {row.userTrace ?? 0} </TableCell>
+                      {/* <TableCell align="left"> {row.userTrace ?? 0} </TableCell> */}
                       <TableCell align="left"> {moment(row.createdAt).format("MMM DD YYYY h:mm A")} </TableCell>
                       <TableCell>
-                        <Stack direction="row" spacing={3}>
+                     <Stack direction="row" spacing={3}>
                           {permissionsData?.users?.substring(3, 4) == "1"
                             ? <AppTooltip title="user edit" placement="bottom"><Button sx={{ "&:hover": { bgcolor: "transparent" } }}
                               onClick={() => handleRequestEdit(row.id)}
@@ -536,30 +547,10 @@ export default function UsersList() {
                               variant="text" className="user_list_row_btn"><VisibilityIcon /></Button></AppTooltip> : ''}
                           {permissionsData?.users?.substring(2, 3) == "1"
                             ? <AppTooltip title="user delete" placement="bottom"><Button variant="text" className="user_list_row_btn" onClick={() => handleClickOpen(row.id)} ><BinIcon /></Button></AppTooltip> : ''}
-                          {permissionsData?.users?.substring(2, 3) == "1"
-                            ? <AppTooltip title="user event" placement="bottom"><Button variant="text" className="user_list_row_btn" onClick={() => handleRequestUserEvent(row)} ><EventOutlinedIcon /></Button></AppTooltip> : ''}
-                          {/* 
-                            <AppTooltip title="track user request" placement="bottom"><Button variant="text" className="user_list_row_btn"   onClick={() => handleChangeBlockUsers(row.id)}><PersonPinCircleOutlinedIcon /></Button></AppTooltip>
-                          <AppTooltip title="social media posts" placement="bottom"><Button variant="text" className="user_list_row_btn"   onClick={() => handleRequestSocial(row)}><ConnectWithoutContactOutlinedIcon /></Button></AppTooltip> */}
-                          <AppTooltip title="track user request" placement="bottom"><Button variant="text" className="user_list_row_btn" onClick={() => handleChangeBlockUsers(row.id, row.userTrace)}><Trace /></Button></AppTooltip>
-                          {permissionsData?.users?.substring(3, 4) == "1"
-                            ? <AppTooltip title="user trust level" placement="bottom"><Button variant="text" className="user_list_row_btn" onClick={() => handleOpenModal(row)}><StarRateIcon /></Button></AppTooltip> : ''}
-                          {permissionsData?.users?.substring(3, 4) == "1"
-                            ? <AppTooltip title="business" placement="bottom"><Button sx={{ "&:hover": { bgcolor: "transparent" } }}
-                              onClick={() => handleRequestBusinessEdit(row.id)}
-                              variant="text" className="user_list_row_btn"><BusinessIcon /></Button></AppTooltip> : ''}
-                          {permissionsData?.users?.substring(3, 4) == "1" ?
-                            <AppTooltip title="linked list" placement="bottom"><Button sx={{ "&:hover": { bgcolor: "transparent" } }}
-                              onClick={() => handleClickLinkPopupOpen(row.id)}
-                              variant="text" className="user_list_row_btn"><UserColoredIcon /></Button></AppTooltip> : ''}
-                          {permissionsData?.users?.substring(3, 4) == "1" ?
-                            <AppTooltip title="location list" placement="bottom"><Button sx={{ "&:hover": { bgcolor: "transparent" } }}
-                              onClick={() => handleOnClick(row)}
-                              variant="text" className="user_list_row_btn"><MyLocationIcon /></Button></AppTooltip> : ''}
-                          {permissionsData?.users?.substring(3, 4) == "1" ?
-                            <AppTooltip title="send notification" placement="bottom"><Button sx={{ "&:hover": { bgcolor: "transparent" } }}
-                              onClick={() => handleOpenNotificationModal(row)}
-                              variant="text" className="user_list_row_btn"><NotificationsIcon /></Button></AppTooltip> : ''}
+                        
+                        
+                         
+                  
                         </Stack>
                       </TableCell>
                     </StyledTableRow>

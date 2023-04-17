@@ -34,7 +34,7 @@ const sidebarData = [
         linkText: 'users',
         link: PATH_DASHBOARD.general.users,
         linkIconElem: <UserCircle />,
-        // permission: "users",
+        permission: "users",
     },
     // {
     //     linkText: 'chat group',

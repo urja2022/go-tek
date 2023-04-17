@@ -101,7 +101,7 @@ export default function Router() {
         },
         {
           path: "/users",
-          element:  <UsersList />,
+          element: permissionsData?.users?.substring(0, 1) == "1" ? <UsersList /> : <Dashboard />,
         },
         {
           path: "/user-location",
